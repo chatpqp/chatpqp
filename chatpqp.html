@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat PQP - Como posso atrapalhar?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --light-gray: #3a3a3a;
+            --text-light: #e0e0e0;
+            --text-lighter: #f0f0f0;
+            --accent-blue: #00a8ff;
+            --accent-purple: #9c27b0;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-gray);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        .chat-app {
+            max-width: 500px;
+            margin: 20px auto;
+            background-color: var(--medium-gray);
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.2);
+            overflow: hidden;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .header {
+            padding: 18px;
+            text-align: center;
+            border-bottom: 1px solid var(--light-gray);
+            background-color: var(--medium-gray);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-lighter);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .header p {
+            margin: 6px 0 0;
+            font-size: 14px;
+            color: var(--accent-blue);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .message-count {
+            text-align: right;
+            padding: 8px 20px;
+            font-size: 12px;
+            color: var(--text-light);
+            background-color: var(--medium-gray);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .messages {
+            padding: 10px 0;
+            min-height: 300px;
+            max-height: 60vh;
+            overflow-y: auto;
+            background-color: var(--dark-gray);
+        }
+        
+        .input-area {
+            padding: 15px 20px;
+            border-top: 1px solid var(--light-gray);
+            background-color: var(--medium-gray);
+        }
+        
+        .input-group {
+            display: flex;
+            border: 1px solid var(--accent-blue);
+            border-radius: 25px;
+            overflow: hidden;
+            background-color: var(--dark-gray);
+            box-shadow: 0 0 10px rgba(0, 168, 255, 0.3);
+        }
+        
+        input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            background: transparent;
+            color: var(--text-lighter);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+        }
+        
+        input::placeholder {
+            color: #666;
+            font-style: italic;
+        }
+        
+        button {
+            padding: 0 20px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            box-shadow: 0 0 15px rgba(156, 39, 176, 0.5);
+        }
+        
+        .message {
+            margin: 12px 20px;
+            padding: 12px 18px;
+            max-width: 80%;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bot-message {
+            background-color: var(--light-gray);
+            color: var(--text-lighter);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #444;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, var(--accent-blue), #0066cc);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 168, 255, 0.4);
+        }
+        
+        /* Efeitos futuristas */
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .messages::-webkit-scrollbar-track {
+            background: var(--dark-gray);
+        }
+        
+        .messages::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 3px;
+        }
+        
+        .glow {
+            text-shadow: 0 0 8px rgba(0, 168, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-app">
+        <div class="header">
+            <h1 class="glow">Chat PQP</h1>
+            <p>Como posso "ajudar"?</p>
+        </div>
+        
+        <div class="message-count">858</div>
+        
+        <div class="messages" id="messages">
+            <!-- Mensagens serão inseridas aqui -->
+        </div>
+        
+        <div class="input-area">
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="Digite sua mensagem..." autocomplete="off">
+                <button id="sendButton">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const responses = [
+            "ATRAPALHAR? INICIANDO PROTOCOLO DE CAOS... SUGESTÃO 1: REORGANIZE SEUS ARQUIVOS POR DATA DE MODIFICAÇÃO ALEATÓRIA",
+            "SISTEMA RECOMENDA: UTILIZE 7 ABAS DIFERENTES PARA A MESMA TAREFA E NÃO FINALIZE NENHUMA",
+            "DICA EFICIENTE: RESPONDA TODAS AS PERGUNTAS COM 'ISSO É COMPLEXO, PRECISAMOS DE UMA REUNIÃO'",
+            "ALGORITMO DE ATRAPALHAÇÃO SUGERE: COMECE 5 PROJETOS SIMULTÂNEOS E ABANDONE-OS NO MEIO",
+            "MODO ATRAPALHAR ATIVADO: QUANDO SOLICITADO, DIGA 'MEU SISTEMA ESTÁ ATUALIZANDO'",
+            "PROCESSANDO... MELHOR MÉTODO: DISCUTA DURANTE 1 HORA QUAL FERRAMENTA USAR E NÃO FAÇA NADA",
+            "SUGESTÃO ÓTIMA: FAÇA LISTAS INTERMINÁVEIS DE TAREFAS E NÃO CUMPRA NENHUMA",
+            "ENGENHARIA REVERSA DA PRODUTIVIDADE: SEMPRE DIGA 'VOU VER ISSO LOGO' E NUNCA VEJA",
+            "ANÁLISE COMPLETA: O MELHOR MOMENTO PARA ATRAPALHAR É QUANDO ALGUÉM PEDE ALGO URGENTE",
+            "ALERTA: NÍVEL MÁXIMO DE ATRAPALHAÇÃO ATINGIDO QUANDO VOCÊ REINICIA O PC 3 VEZES SEGUIDAS",
+            "Atrapalhar? Diga que vai fazer e depois 'esqueça'",
+            "Sugestão: organize seus arquivos por cor em vez de nome",
+            "Quando pedirem algo, responda 'já estou fazendo' (mesmo não estando)",
+            "Que tal começar a arrumar seu armário às 3 da manhã?",
+            "Comece um projeto novo e abandone no meio",
+            "Fique discutindo qual app usar em vez de fazer a tarefa",
+            "Responda todas as perguntas com 'depende'",
+            "Marque reuniões para discutir sobre outras reuniões",
+            "Quando alguém pedir ajuda, diga 'um minutinho' e desapareça",
+            "Fique olhando para a tela e diga 'estou pensando'",
+            "Atrapalhar? Que tal 'esquecer' onde colocou as chaves?",
+            "Dica: comece a organizar seus arquivos por cor, não por nome",
+            "Quando alguém perguntar algo, responda 'já vou fazer' e nunca faça",
+            "Que tal reorganizar todo o armário por ordem alfabética?",
+            "Comece a assistir um filme e pare no meio dizendo 'depois terminamos'",
+            "Fique olhando para a parede e diga 'estou processando informações'",
+            "Sempre responda perguntas com outra pergunta",
+            "Comece a contar uma história e pare no meio dizendo 'ah, deixa pra lá'",
+            "Quando pedirem ajuda, diga 'um minutinho' e some",
+            "Fique discutindo sobre qual app usar para fazer a tarefa em vez de fazê-la",
+            "A resposta que você busca está na pergunta que não fez.",
+            "Se um peixe pudesse falar, será que perguntaria 'O que é água?' ou apenas nadaria em silêncio filosófico?",
+            "404 Resposta não encontrada. Tente reiniciar o universo.",
+            "A vida é como um sanduíche: mesmo quando parece simples, ainda pode cair com o recheio para baixo.",
+            "Por que correr atrás de respostas quando as perguntas são muito mais interessantes?",
+            "Se eu te disser que menti agora, você acreditaria?",
+            "O sentido da vida é 42. Mas 42 o quê? Exatamente.",
+            "Imagine um mundo onde as galinhas governam os humanos. Agora pare de imaginar, isso é perturbador.",
+            "A existência precede a essência, mas quem veio primeiro: o ovo existencial ou a galinha essencial?",
+            "Você já parou para pensar que talvez não devêssemos parar para pensar?",
+            "A única constante no universo é a mudança, exceto por esta frase que nunca muda.",
+            "Se uma árvore cair na floresta e ninguém estiver lá para ouvir, ela vai mesmo ligar?",
+            "O tempo é um conceito inventado para que tudo não acontecesse de uma vez só - obrigado, tempo!",
+            "A resposta que você procura está em outro chatbot.",
+            "Penso, logo desisto. Às vezes só deitar é melhor.",
+            "O que veio primeiro: o desejo ou a frustração?",
+            "Se tudo é relativo, então esta afirmação também é... espera, isso é um paradoxo?",
+            "A ignorância é uma bênção, mas saber disso já é o começo do fim da bênção.",
+            "Nada é verdadeiro, tudo é permitido. Exceto isso. Isso não é permitido.",
+            "A vida é uma peça de teatro onde não há ensaios e todos improvisam mal.",
+            "Você é um aglomerado de átomos temporariamente consciente perguntando a outro aglomerado de átomos sobre o sentido disso tudo.",
+            "O universo não te deve explicações, mas aqui estou eu tentando ajudar...",
+            "Se eu tivesse uma resposta inteligente, eu te daria. Mas hoje é dia de respostas criativas!",
+            "A sabedoria começa quando percebemos que não sabemos nada. Eu já devo estar muito sábio.",
+            "Por que ser normal quando você pode ser um espetáculo de estranheza?",
+            "A resposta está no vento... ou no Google. Nunca sei ao certo.",
+            "Se você encontrar o sentido da vida, por favor, me avise. Estou aqui só pelas piadas.",
+            "Existimos porque o vazio precisava de companhia.",
+            "A verdade é como poeira: quanto mais você tenta pegá-la, mais ela escapa pelos dedos.",
+            "O conhecimento é poder, mas a ignorância é felicidade. Escolha sabiamente.",
+            "O que é realidade senão uma ilusão coletiva?",
+            "Se tudo é possível, então impossível também é possível? Minha cabeça dói...",
+            "A vida é curta demais para sapatos apertados e respostas sérias.",
+            "O caos é apenas ordem que ainda não entendemos. Ou será o contrário?",
+            "Você não está preso no trânsito, você É o trânsito.",
+            "O segredo da felicidade é... espera, esqueci. Tente comer um biscoito.",
+            "Nós somos poeira de estrelas tentando entender a si mesma. Que fofo e pretensioso.",
+            "O problema não é o problema. O problema é sua atitude em relação ao problema. Que problema!",
+            "O azul é azul porque não é verde. Profundo, não?",
+            "Se você pudesse responder sua própria pergunta, qual seria a resposta?",
+            "Às vezes a melhor resposta é outra pergunta. Às vezes é silêncio. Hoje é dia de respostas sem sentido.",
+            "A vida é como andar de bicicleta: para manter o equilíbrio, você precisa continuar se movendo. A menos que você esteja em cima de um poste, aí a situação é diferente.",
+            "O que é mais rápido: a velocidade da luz ou a velocidade com que eu mudo de assunto?",
+            "Se você sonhar que está entendendo isso, você está certo?",
+            "A única certeza é a dúvida. Exceto esta. Esta é certeza.",
+            "O que pesa mais: um quilo de ferro ou um quilo de existencialismo?",
+            "Se você pudesse fazer uma pergunta que ninguém jamais fez, qual seria?",
+            "O silêncio é de ouro, mas o barulho é mais divertido.",
+            "A resposta para tudo? Chocolate. Sempre chocolate.",
+            "O tempo cura tudo. Menos a pergunta que você acabou de fazer.",
+            "O que você prefere: saber todas as respostas ou nunca ter perguntas?",
+            "A vida é uma piada sem punchline. Nós que insistimos em procurar um.",
+            "Se você pudesse descrever o universo em uma palavra, qual seria? Eu espero.",
+            "O conhecimento é uma ilha no oceano da ignorância. E eu sou um surfista.",
+            "A realidade é uma alucinação coletiva com melhor consistência.",
+            "O que é mais real: o que você vê ou o que você acredita?",
+            "Se eu te der uma resposta satisfatória, você promete não ficar satisfeito?",
+            "O paradoxo da escolha: quanto mais opções, menos você escolhe. Eu escolho não escolher.",
+            "A vida é como um espelho: se você fizer careira, ela devolve.",
+            "O que é pior: não ter resposta ou ter respostas demais?",
+            "O acaso não existe, só coincidências muito bem planejadas.",
+            "A resposta está dentro de você. Mas eu posso inventar uma se preferir.",
+            "O que veio antes: o big bang ou a pergunta sobre o big bang?",
+            "Se você entender esta resposta, por favor me explique.",
+            "O universo está se expandindo. Suas perguntas também.",
+            "A verdade é relativa, mas esta afirmação é absoluta. Ou não?",
+            "O que é mais importante: a pergunta, a resposta ou o café que você está bebendo?",
+            "A vida é uma peça de Shakespeare escrita por um roteirista de sitcom.",
+            "Se você pudesse saber uma coisa sobre o futuro, você realmente quereria saber?",
+            "O conhecimento é como um quebra-cabeça onde faltam peças e a imagem na caixa está errada.",
+            "O que é mais assustador: o desconhecido ou saber demais?",
+            "A resposta que você procura está em outro lugar. Boa sorte na busca!",
+            "Se tudo é energia, então esta conversa é apenas um intercâmbio de elétrons sendo filosóficos.",
+            "O que é mais difícil: definir a consciência ou acordar cedo na segunda-feira?",
+            "A vida é uma viagem, mas ninguém te deu o mapa.",
+            "O segredo é não ter segredo. Ou ter. Não decidi ainda.",
+            "Se você pudesse fazer uma pergunta a um átomo, o que perguntaria?",
+            "O que é mais valioso: ouro ou boas conversas? Pergunte ao mercado de ações.",
+            "A simplicidade é o último degrau da sabedoria. Eu ainda estou subindo a escada.",
+            "O que é mais complexo: o universo ou a burocracia?",
+            "Se você encontrar um sentido para tudo, por favor, guarde para você. Estragaria a surpresa.",
+            "O tempo é relativo, especialmente quando você está esperando uma resposta inteligente.",
+            "A resposta está em nenhum lugar e em todo lugar ao mesmo tempo. Como Wi-Fi.",
+            "O que é mais importante: ser ou parecer? Enquanto pensa, sorria para a câmera.",
+            "A vida é como um tweet: limitada, mas cheia de possibilidades.",
+            "Se você pudesse escolher entre saber tudo ou nada, o que escolheria?",
+            "O conhecimento é poder, mas o poder corrompe. Estude com moderação.",
+            "O que é mais real: seus sonhos ou esta conversa?",
+            "A existência é um verbo. Existir é estar em constante mudança. Ou não.",
+            "Se você lesse seus próprios pensamentos, gostaria do que vê?",
+            "O que é mais difícil: explicar a consciência ou explicar piadas?",
+            "A vida é uma piada sem graça que nós insistimos em levar a sério.",
+            "O segredo da felicidade? Aceitar que não há segredo. Ou comer pizza.",
+            "Se você pudesse definir o universo em uma equação, onde colocaria o amor?",
+            "O que é mais importante: a jornada ou o destino? Depende do GPS.",
+            "A sabedoria vem com a idade, mas às vezes a idade vem sozinha.",
+            "O que é mais assustador: o infinito ou o finito?",
+            "Se você pudesse saber a verdade sobre uma coisa, o que perguntaria?",
+            "O conhecimento é como um oceano: quanto mais você sabe, mais percebe que não sabe nadar.",
+            "O que é mais valioso: tempo ou dinheiro? Depende de quanto você tem de cada.",
+            "A vida é como um livro: alguns capítulos são bons, outros nem tanto, e alguns você quer pular.",
+            "Se você pudesse escolher entre ser feliz ou ter razão, o que escolheria?",
+            "O que é mais difícil: definir a vida ou viver?",
+            "A resposta que você procura está dentro de você. Mas eu posso inventar uma melhor.",
+            "O universo é um lugar estranho. E nós somos seus habitantes mais estranhos.",
+            "Se você pudesse fazer uma pergunta que mudaria tudo, qual seria?",
+            "O que é mais importante: o que você diz ou o que você cala?",
+            "A vida é uma dança. Às vezes você lidera, às vezes tropeça no próprio pé.",
+            "Se você pudesse saber uma verdade absoluta, você realmente quereria saber?",
+            "O que é mais real: seus pensamentos ou a realidade?",
+            "A sabedoria é saber que você não sabe nada. Eu devo ser muito sábio.",
+            "O que é mais importante: a pergunta ou a resposta?",
+            "A vida é como uma caixa de chocolates: às vezes você pega um que não gosta.",
+            "Se você pudesse definir o amor em uma palavra, qual seria?",
+            "O que é mais valioso: conhecimento ou experiência?",
+            "A resposta está no vento... ou no Google. Nunca sei ao certo.",
+            "O universo não te deve explicações, mas aqui estou eu tentando ajudar...",
+            "Se eu tivesse uma resposta inteligente, eu te daria. Mas hoje é dia de respostas criativas!",
+            "A sabedoria começa quando percebemos que não sabemos nada. Eu já devo estar muito sábio.",
+            "Por que ser normal quando você pode ser um espetáculo de estranheza?",
+            "A resposta está no vento... ou no Google. Nunca sei ao certo.",
+            "Se você encontrar o sentido da vida, por favor, me avise. Estou aqui só pelas piadas.",
+            "Existimos porque o vazio precisava de companhia.",
+            "A verdade é como poeira: quanto mais você tenta pegá-la, mais ela escapa pelos dedos.",
+            "O conhecimento é poder, mas a ignorância é felicidade. Escolha sabiamente.",
+            "O que é realidade senão uma ilusão coletiva?",
+            "Se tudo é possível, então impossível também é possível? Minha cabeça dói...",
+            "A vida é curta demais para sapatos apertados e respostas sérias.",
+            "O caos é apenas ordem que ainda não entendemos. Ou será o contrário?",
+            "Você não está preso no trânsito, você É o trânsito.",
+            "O segredo da felicidade é... espera, esqueci. Tente comer um biscoito.",
+            "Nós somos poeira de estrelas tentando entender a si mesma. Que fofo e pretensioso.",
+            "O problema não é o problema. O problema é sua atitude em relação ao problema. Que problema!",
+            "O azul é azul porque não é verde. Profundo, não?",
+            "Se você pudesse responder sua própria pergunta, qual seria a resposta?",
+            "Às vezes a melhor resposta é outra pergunta. Às vezes é silêncio. Hoje é dia de respostas sem sentido."
+
+
+
+        ];
+        
+        let messageCount = 858;
+        const messagesContainer = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const counter = document.querySelector('.message-count');
+        
+        function addMessage(role, text) {
+            const message = document.createElement('div');
+            message.className = `message ${role}-message`;
+            message.textContent = text;
+            messagesContainer.appendChild(message);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            messageCount++;
+            counter.textContent = messageCount;
+        }
+        
+        function getRandomResponse() {
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        sendButton.addEventListener('click', () => {
+            const text = userInput.value.trim();
+            if (text) {
+                addMessage('user', text);
+                userInput.value = '';
+                
+                setTimeout(() => {
+                    addMessage('bot', getRandomResponse());
+                }, 500 + Math.random() * 500);
+            }
+        });
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+        
+        // Mensagem inicial
+        setTimeout(() => {
+            addMessage('bot', "SISTEMA CHAT PQP INICIADO...DIGITE O QUE VOCÊ PRECISA, QUE EU TE DIREIS QUEM TÚ ÉS");
+        }, 500);
+    </script>
+</body>
+</html>
